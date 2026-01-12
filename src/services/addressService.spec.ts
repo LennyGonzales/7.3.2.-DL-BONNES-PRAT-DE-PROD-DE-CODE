@@ -15,18 +15,18 @@ describe('AddressService', () => {
       findById: jest.fn(),
       save: jest.fn(),
     };
-    service = new AddressService(mockRepo as any);
+    service = new AddressService(mockRepo);
   });
 
   it('listAddresses retourne la liste fournie par le repo', async () => {
-    const sample: Address[] = [{ id: '1', street: 'Main', city: 'Town', country: 'Country' } as unknown as Address];
+    const sample: Address[] = [new Address('Main', 'Town', 30100), new Address('Second', 'Village', 30200)];
     mockRepo.findAll.mockResolvedValue(sample);
     await expect(service.listAddresses()).resolves.toEqual(sample);
     expect(mockRepo.findAll).toHaveBeenCalledTimes(1);
   });
 
   it('getAddress retourne l\'adresse quand elle existe', async () => {
-    const addr: Address = { id: '1', street: 'Main', city: 'Town', country: 'Country' } as unknown as Address;
+    const addr = new Address('Main','Town', 30100, '1');
     mockRepo.findById.mockResolvedValue(addr);
     await expect(service.getAddress('1')).resolves.toEqual(addr);
     expect(mockRepo.findById).toHaveBeenCalledWith('1');
@@ -39,8 +39,9 @@ describe('AddressService', () => {
   });
 
   it('createAddress appelle save et retourne l\'adresse créée', async () => {
-    const input: Omit<Address, 'id'> = { street: 'New', city: 'City', country: 'Land' } as unknown as Omit<Address, 'id'>;
-    const saved: Address = { id: '2', ...input } as unknown as Address;
+    const input = new Address('New', 'City', 10100);
+    const { street, city, zip } = input;
+    const saved = new Address(street, city, zip, '2');
     mockRepo.save.mockResolvedValue(saved);
     await expect(service.createAddress(input)).resolves.toEqual(saved);
     expect(mockRepo.save).toHaveBeenCalledWith(input);

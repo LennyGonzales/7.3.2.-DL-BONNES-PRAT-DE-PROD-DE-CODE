@@ -1,5 +1,5 @@
-import { PhysicalActivities } from '../../domain/physicalActivities';
+import { PhysicalActivities } from '../../domain/PhysicalActivities';
 
-export interface physicalActivityPort {
+export interface PhysicalActivityPort {
   listPhysicalActivity(): Promise<PhysicalActivities>;
 }

@@ -1,33 +1,46 @@
-import express from 'express';
-import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
-import { HealthRecord } from '../../domain/healthRecord';
+
+import express, { Express } from 'express';
+import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import {Request, Response} from "express";
 import { HealthRecordPort } from '../../ports/driving/healthRecordPort';
+import { HealthRecord } from '../../domain/healthRecord';
 
 const router = express.Router();
 
-const repo = new InMemoryAddressRepo();
-const service: HealthRecordPort; // AddressService(repo);
+export class HealthRecordController {
+  private service: HealthRecordPort;
 
-router.get('/users/:user_id/health_records', async (req, res) => {
-  const list = await service.listHealthRecords();
-  res.json(list);
-});
-
-router.post('/users/:user_id/health_records', async (req, res) => {
-  const { timestamp, heartbeat } = req.body;
-  const user_id = req.params.user_id;
-  if (!user_id || !timestamp || !heartbeat) {
-    return res.status(400).json({ message: 'user_id, timestamp and heartbeat required' });
+  constructor(private readonly addressRepo: AddressRepositoryPort) {
+    // this.service = new AddressService(addressRepo);
   }
-  const created = await service.createHealthRecord(new HealthRecord(user_id, timestamp, heartbeat));
-  res.status(201).json(created);
-});
 
-router.get('/users/:user_id/health_records/:id', async (req, res) => {
-  const id = req.params.id;
-  const found = await service.getHealthRecord(id);
-  if (!found) return res.status(404).json({ message: 'Not found' });
-  res.json(found);
-});
+  registerRoutes(app: Express) {
+    app.get('/users/:user_id/health_records', this.getAllHealthRecords.bind(this));
+    app.post('/users/:user_id/health_records', this.createHealthRecord.bind(this));
+    app.get('/users/:user_id/health_records/:id', this.getHealthRecord.bind(this));
+  }
+
+  async getAllHealthRecords(req: Request, res: Response) {
+    const list = await this.service.listHealthRecords();
+    res.json(list);
+  }
+
+  async createHealthRecord(req: Request, res: Response) {
+    const { timestamp, heartbeat } = req.body;
+    const user_id = req.params.user_id;
+    if (!user_id || !timestamp || !heartbeat) {
+      return res.status(400).json({ message: 'user_id, timestamp and heartbeat required' });
+    }
+    const created = await service.createHealthRecord(new HealthRecord(user_id, timestamp, heartbeat));
+    res.status(201).json(created);
+  }
+
+  async getHealthRecord(req: Request, res: Response) {
+    const id = req.params.id;
+    const found = await this.service.getHealthRecord(id);
+    if (!found) return res.status(404).json({ message: 'Not found' });
+    res.json(found);
+  }
+}
 
 export default router;

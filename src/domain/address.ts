@@ -2,9 +2,9 @@ export class Address {
   id?: string;
   street: string;
   city: string;
-  zip: string;
+  zip: number;
 
-  constructor(street: string, city: string, zip: string, id?: string) {
+  constructor(street: string, city: string, zip: number, id?: string) {
     this.id = id;
     this.street = street;
     this.city = city;

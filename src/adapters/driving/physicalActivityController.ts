@@ -1,15 +1,26 @@
-import express from 'express';
-import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
-import { physicalActivityPort } from '../../ports/driving/physicalActivityPort';
+import express, { Express } from 'express';
+import { Address } from "../../domain/address";
+import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import {Request, Response} from "express";
+import { PhysicalActivityPort } from '../../ports/driving/physicalActivityPort';
 
 const router = express.Router();
 
-const repo = new InMemoryAddressRepo();
-const service: physicalActivityPort; // AddressService(repo);
+export class PhysicalActivityController {
+  private service: PhysicalActivityPort;
 
-router.get('/users/:user_id/physical_activities', async (req, res) => {
-  const list = await service.listPhysicalActivity();
-  res.json(list);
-});
+  constructor(private readonly addressRepo: AddressRepositoryPort) {
+    // this.service = new AddressService(addressRepo);
+  }
+
+  registerRoutes(app: Express) {
+    app.get('/users/:user_id/physical_activities', this.getAllPhysicalActivities.bind(this));
+  }
+
+  async getAllPhysicalActivities(req: Request, res: Response) {
+    const list = await this.service.listPhysicalActivity();
+    res.json(list);
+  }
+}
 
 export default router;
