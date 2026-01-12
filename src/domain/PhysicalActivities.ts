@@ -1,4 +1,4 @@
-import { PhysicalActivity } from "./PhysicalActivity";
+import { PhysicalActivity } from "./physicalActivity";
 
 export class PhysicalActivities {
   user_id: string;
