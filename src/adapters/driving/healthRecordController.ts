@@ -1,17 +1,14 @@
 
-import express, { Express } from 'express';
-import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import { Express } from 'express';
 import {Request, Response} from "express";
 import { HealthRecordPort } from '../../ports/driving/healthRecordPort';
 import { HealthRecord } from '../../domain/healthRecord';
 
-const router = express.Router();
-
 export class HealthRecordController {
   private service: HealthRecordPort;
 
-  constructor(private readonly addressRepo: AddressRepositoryPort) {
-    // this.service = new AddressService(addressRepo);
+  constructor(private readonly healthRecordService: HealthRecordPort) {
+    this.service = healthRecordService;
   }
 
   registerRoutes(app: Express) {
@@ -42,5 +39,3 @@ export class HealthRecordController {
     res.json(found);
   }
 }
-
-export default router;

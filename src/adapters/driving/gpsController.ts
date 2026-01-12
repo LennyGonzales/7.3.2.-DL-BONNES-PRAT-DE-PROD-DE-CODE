@@ -1,16 +1,13 @@
-import express, { Express } from 'express';
-import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import { Express } from 'express';
 import {Request, Response} from "express";
 import { GpsPort } from '../../ports/driving/gpsPort';
 import { Gps } from '../../domain/gps';
 
-const router = express.Router();
-
 export class GpsController {
   private service: GpsPort;
 
-  constructor(private readonly addressRepo: AddressRepositoryPort) {
-    // this.service = new AddressService(addressRepo);
+  constructor(private readonly gpsService: GpsPort) {
+    this.service = gpsService;
   }
 
   registerRoutes(app: Express) {
@@ -41,5 +38,3 @@ export class GpsController {
     res.json(found);
   }
 }
-
-export default router;

@@ -1,16 +1,12 @@
-import express, { Express } from 'express';
-import { Address } from "../../domain/address";
-import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import { Express } from 'express';
 import {Request, Response} from "express";
 import { PhysicalActivityPort } from '../../ports/driving/physicalActivityPort';
-
-const router = express.Router();
 
 export class PhysicalActivityController {
   private service: PhysicalActivityPort;
 
-  constructor(private readonly addressRepo: AddressRepositoryPort) {
-    // this.service = new AddressService(addressRepo);
+  constructor(private readonly physicalActivityService: PhysicalActivityPort) {
+    this.service = physicalActivityService;
   }
 
   registerRoutes(app: Express) {
@@ -22,5 +18,3 @@ export class PhysicalActivityController {
     res.json(list);
   }
 }
-
-export default router;

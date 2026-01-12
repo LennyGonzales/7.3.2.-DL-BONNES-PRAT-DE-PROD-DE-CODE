@@ -1,7 +1,6 @@
 import express from 'express';
 import * as YAML from 'yaml';
 import swaggerUi from 'swagger-ui-express';
-import addressController from './adapters/driving/addressController';
 import * as fs from "node:fs";
 
 import { AddressController } from './adapters/driving/addressController';

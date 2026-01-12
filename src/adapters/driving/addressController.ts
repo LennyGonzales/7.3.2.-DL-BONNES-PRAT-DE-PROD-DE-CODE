@@ -40,5 +40,3 @@ export class AddressController {
     res.json(found);
   }
 }
-
-export default router;
