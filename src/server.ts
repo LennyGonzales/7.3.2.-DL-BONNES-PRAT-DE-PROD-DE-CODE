@@ -1,7 +1,7 @@
 import express from 'express';
 import * as YAML from 'yaml';
 import swaggerUi from 'swagger-ui-express';
-import addressController from './adapters/driving/addressController';
+import addressController from './adapters/driving/gpsController';
 import path from 'path';
 
 const app = express();

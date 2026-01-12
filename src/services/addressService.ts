@@ -1,6 +1,6 @@
 import { Address } from '../domain/address';
 import { AddressRepositoryPort } from '../ports/driven/repoPort';
-import { AddressPort } from "../ports/driving/addressPort";
+import { AddressPort } from "../ports/driving/gpsPort";
 
 export class AddressService implements AddressPort {
   constructor(private repos: AddressRepositoryPort[]) {}
