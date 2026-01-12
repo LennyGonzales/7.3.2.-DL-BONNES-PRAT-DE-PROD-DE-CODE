@@ -1,84 +1,511 @@
 openapi: 3.0.0
 info:
-  title: AddressApp API
-  version: 0.1.0
+  version: 1.0.0
+  title: Evil Distopia
+  description: An API that uses a Gps and medical data
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: /
 paths:
-  /addresses:
+  /users/{user_id}/gps:
     get:
-      summary: List addresses
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Address'
-    post:
-      summary: Create address
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressInput'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-
-  /addresses/{id}:
-    get:
-      summary: Get address by id
+      tags:
+        - GPS
+      summary: List user's GPS points
+      description: Return GPS records for the user.
+      operationId: findGps
       parameters:
-        - name: id
+        - name: user_id
           in: path
+          description: ID of User
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: OK
+          description: gps response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Address'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gps'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - GPS
+      summary: Create GPS point
+      description: Create a GPS record for the user; rejects duplicates.
+      operationId: addGps
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Gps to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGps'
+      responses:
+        '200':
+          description: gps response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gps'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: duplicate gps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{user_id}/gps/{id}:
+    get:
+      tags:
+        - GPS
+      summary: Get GPS point
+      description: Return a GPS record by id for the user.
+      operationId: find Gps by id
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID of Gps to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Gps response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gps'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
-          description: Not Found
-
+          description: gps not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - GPS
+      summary: Delete GPS point
+      description: Delete a GPS record by id for the user.
+      operationId: deleteGps
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID of Gps to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Gps deleted
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: gps not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{user_id}/medical:
+    get:
+      tags:
+        - Health Records
+      summary: List user's medical records
+      description: Return medical records for the user.
+      operationId: findMedical
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: medical response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Medical'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Health Records
+      summary: Create medical record
+      description: Create a medical record for the user; rejects duplicates.
+      operationId: addMedical
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Medical to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMedical'
+      responses:
+        '200':
+          description: medical response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medical'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: duplicate medical record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{user_id}/medical/{id}:
+    get:
+      tags:
+        - Health Records
+      summary: Get medical record
+      description: Return a medical record by id for the user.
+      operationId: find Medical by id
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID of Medical to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Medical response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medical'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: medical record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Health Records
+      summary: Delete medical record
+      description: Delete a medical record by id for the user.
+      operationId: deleteMedical
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of User
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID of Medical
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Medical deleted
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: medical record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{user_id}/physical_activities:
+    get:
+      tags:
+        - PHYSICAL ACTIVITY
+      summary: List user's physical activities
+      description: Return physical activity records for the user.
+      operationId: findPhysicalActivity
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of physical_activity
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: medical response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalActivities'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Address:
+    Gps:
+      allOf:
+        - $ref: '#/components/schemas/NewGps'
+        - type: object
+          required:
+            - id
+            - user_id
+          properties:
+            id:
+              type: string
+            user_id:
+              type: string
+    NewGps:
       type: object
-      properties:
-        id:
-          type: string
-        street:
-          type: string
-        city:
-          type: string
-        zip:
-          type: string
       required:
-        - id
-        - street
-        - city
-        - zip
-
-    AddressInput:
+        - timestamp
+        - latitude
+        - longitude
+      properties:
+        timestamp:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+    Medical:
+      allOf:
+        - $ref: '#/components/schemas/NewMedical'
+        - type: object
+          required:
+            - id
+            - user_id
+          properties:
+            id:
+              type: string
+            user_id:
+              type: string
+    NewMedical:
       type: object
-      properties:
-        street:
-          type: string
-        city:
-          type: string
-        zip:
-          type: string
       required:
-        - street
-        - city
-        - zip
+        - timestamp
+        - heartbeat
+      properties:
+        timestamp:
+          type: string
+        heartbeat:
+          type: integer
+    PhysicalActivity:
+      type: object
+      required:
+        - start_at
+        - end_at
+        - gps
+      properties:
+        start_at:
+          type: string
+        end_at:
+          type: string
+        itinerary:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewGps'
+    PhysicalActivities:
+      type: object
+      required:
+        - user_id
+        - physical_activiies
+      properties:
+        user_id:
+          type: string
+        physical_activiies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhysicalActivity'
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
