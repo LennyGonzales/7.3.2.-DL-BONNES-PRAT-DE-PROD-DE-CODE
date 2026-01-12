@@ -6,6 +6,7 @@ import * as fs from "node:fs";
 
 import { AddressController } from './adapters/driving/addressController';
 import { InMemoryAddressRepo } from "./adapters/driven/inMemoryAddressRepo";
+import { AddressService } from "./services/addressService";
 
 const app = express();
 app.use(express.json());
@@ -17,7 +18,8 @@ const swaggerDocument = YAML.parse(file)
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-const addressController = new AddressController(addressRepo);
+const addressService = new AddressService(addressRepo);
+const addressController = new AddressController(addressService);
 addressController.registerRoutes(app);
 
 const port = process.env.PORT || 3000;

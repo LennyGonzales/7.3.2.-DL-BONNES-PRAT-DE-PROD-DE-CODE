@@ -6,13 +6,11 @@ import { AddressRepositoryPort } from "../../ports/driven/repoPort";
 import { AddressPort } from "../../ports/driving/addressPort";
 import {Request, Response} from "express";
 
-const router = express.Router();
-
 export class AddressController {
   private service: AddressPort;
 
-  constructor(private readonly addressRepo: AddressRepositoryPort) {
-    this.service = new AddressService(addressRepo);
+  constructor(private readonly addressService: AddressPort) {
+    this.service = addressService;
   }
 
   registerRoutes(app: Express) {
