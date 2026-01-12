@@ -1,6 +1,5 @@
 import express from 'express';
 import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
-import { GpsPort } from '../../ports/driving/gpsPort';
 import { HealthRecord } from '../../domain/healthRecord';
 import { HealthRecordPort } from '../../ports/driving/healthRecordPort';
 

@@ -1,7 +1,5 @@
 import express from 'express';
 import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
-import { AddressService } from '../../services/addressService';
-import { Address } from "../../domain/address";
 import { GpsPort } from '../../ports/driving/gpsPort';
 import { Gps } from '../../domain/gps';
 
