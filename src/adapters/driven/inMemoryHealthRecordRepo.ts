@@ -17,7 +17,6 @@ export class inMemoryHealthRecordRepo implements HealthRecordRepositoryPort {
     async save(healthRecord: Omit<HealthRecord, 'id'>): Promise<HealthRecord> {
         const newHealthRecord: HealthRecord = { ...healthRecord, id: uuidv4() };
         this.store.push(newHealthRecord);
-        console.log('Saved HealthRecord:', newHealthRecord);
         return newHealthRecord;
     }
 }

@@ -1,4 +1,4 @@
-import { Address } from '../../domain/address';
+import { Address, createAddressDTO } from '../../domain/address';
 import { AddressRepositoryPort } from '../../ports/driven/addressRepositoryPort';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,8 +14,9 @@ export class InMemoryAddressRepo implements AddressRepositoryPort {
     return found ?? null;
   }
 
-  async save(address: Omit<Address, 'id'>): Promise<Address> {
-    const newAddress: Address = { ...address, id: uuidv4() };
+  async save(address: createAddressDTO): Promise<Address> {
+    const uuid = uuidv4();
+    const newAddress: Address = new Address(address.street, address.city, address.zip, uuid);
     this.store.push(newAddress);
     return newAddress;
   }

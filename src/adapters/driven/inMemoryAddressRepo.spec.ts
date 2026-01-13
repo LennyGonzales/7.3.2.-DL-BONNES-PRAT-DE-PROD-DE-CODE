@@ -1,7 +1,8 @@
-import { Address } from '../../domain/address';
+import { Address, createAddressDTO } from '../../domain/address';
 import { InMemoryAddressRepo } from './inMemoryAddressRepo';
 
 describe('inMemoryAddressRepo', () => {
+  jest.mock('uuid', () => ({ v4: () => '123456789' }));
   let repo: InMemoryAddressRepo;
   let addresses: Address[] = [];
 
@@ -11,7 +12,7 @@ describe('inMemoryAddressRepo', () => {
   })
 
   it('should save an address', async () => {
-    const addressData = new Address('123 Main St','Anytown',12345);
+    const addressData = new createAddressDTO('123 Main St','Anytown',12345);
     const savedAddress = await repo.save(addressData);
 
     expect(savedAddress).toHaveProperty('id');

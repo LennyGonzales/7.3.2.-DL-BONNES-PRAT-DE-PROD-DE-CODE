@@ -1,10 +1,7 @@
-import express, { Express } from 'express';
-import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
-import { AddressService } from '../../services/addressService';
-import { Address } from "../../domain/address";
-import { AddressRepositoryPort } from "../../ports/driven/addressRepositoryPort";
+import { Express } from 'express';
+import { createAddressDTO } from "../../domain/address";
 import { AddressPort } from "../../ports/driving/addressPort";
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 
 export class AddressController {
   private service: AddressPort;
@@ -29,7 +26,7 @@ export class AddressController {
     if (!street || !city || !zip) {
       return res.status(400).json({ message: 'street, city and zip required' });
     }
-    const created = await this.service.createAddress(new Address(street, city, zip));
+    const created = await this.service.createAddress(new createAddressDTO(street, city, zip));
     res.status(201).json(created);
   }
 
