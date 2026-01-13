@@ -15,7 +15,7 @@ export class inMemoryGpsRepo implements GpsRepositoryPort {
   }
 
   async save(gps: Omit<Gps, 'id'>): Promise<Gps> {
-    const newGps: Gps = new Gps(gps.user_id, gps.timestamp, gps.latitude, gps.longitude, uuidv4());
+    const newGps: Gps = { ...gps, id: uuidv4() };
     this.store.push(newGps);
     return newGps;
   }

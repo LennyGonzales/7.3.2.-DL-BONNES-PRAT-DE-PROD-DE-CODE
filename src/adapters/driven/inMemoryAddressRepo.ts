@@ -15,7 +15,7 @@ export class InMemoryAddressRepo implements AddressRepositoryPort {
   }
 
   async save(address: Omit<Address, 'id'>): Promise<Address> {
-    const newAddress: Address = { id: uuidv4(), ...address };
+    const newAddress: Address = { ...address, id: uuidv4() };
     this.store.push(newAddress);
     return newAddress;
   }
