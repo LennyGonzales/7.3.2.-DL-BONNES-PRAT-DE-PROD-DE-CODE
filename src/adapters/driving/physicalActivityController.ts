@@ -15,7 +15,7 @@ export class PhysicalActivityController {
 
   async getAllPhysicalActivities(req: Request, res: Response) {
     const user_id = req.params.user_id;
-    const list = await this.service.listPhysicalActivity(user_id);
+    const list = await this.service.listPhysicalActivitiesByUserId(user_id);
     res.json(list);
   }
 }

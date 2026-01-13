@@ -9,12 +9,16 @@ import { AddressService } from "./services/addressService";
 import { GpsController } from './adapters/driving/gpsController';
 import { GpsService } from './services/gpsService';
 import { inMemoryGpsRepo } from './adapters/driven/inMemoryGpsRepo';
+import { inMemoryPhysicalActivityRepo } from './adapters/driven/inMemoryPhysicalActivityRepo';
+import { PhysicalActivityController } from './adapters/driving/physicalActivityController';
+import { PhysicalActivityService } from './services/physicalActivityService';
 
 const app = express();
 app.use(express.json());
 
 const addressRepo = new InMemoryAddressRepo();
 const gpsRepo = new inMemoryGpsRepo();
+const physicalActivityRepository = new inMemoryPhysicalActivityRepo();
 
 const file  = fs.readFileSync('./openapi.yaml', 'utf8')
 const swaggerDocument = YAML.parse(file)
@@ -28,6 +32,10 @@ addressController.registerRoutes(app);
 const gpsService = new GpsService(gpsRepo);
 const gpsController = new GpsController(gpsService);
 gpsController.registerRoutes(app);
+
+const physicalActivityService = new PhysicalActivityService(physicalActivityRepository);
+const physicalActivityController = new PhysicalActivityController(physicalActivityService);
+physicalActivityController.registerRoutes(app);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
