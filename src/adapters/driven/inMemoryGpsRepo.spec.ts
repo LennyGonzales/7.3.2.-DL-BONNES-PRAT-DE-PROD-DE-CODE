@@ -1,4 +1,4 @@
-import { Gps } from '../../domain/gps';
+import { createGpsDTO, Gps } from '../../domain/gps';
 import { inMemoryGpsRepo } from './inMemoryGpsRepo';
 
 describe('inMemoryGpsRepo', () => {
@@ -11,7 +11,7 @@ describe('inMemoryGpsRepo', () => {
   })
 
   it('should save a gps', async () => {
-    const gpsData = new Gps('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25 17:45:30.005', '43.6728315', '32.3326411', 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    const gpsData = new createGpsDTO('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25 17:45:30.005', '43.6728315', '32.3326411');
     const savedGps = await repo.save(gpsData);
 
     expect(savedGps).toHaveProperty('id');

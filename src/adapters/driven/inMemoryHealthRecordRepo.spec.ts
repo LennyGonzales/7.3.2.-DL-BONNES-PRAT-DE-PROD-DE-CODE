@@ -1,4 +1,4 @@
-import { HealthRecord } from '../../domain/healthRecord';
+import { createHealthRecordDTO, HealthRecord } from '../../domain/healthRecord';
 import { inMemoryHealthRecordRepo } from './inMemoryHealthRecordRepo';
 
 describe('inMemoryHealthRecordRepo', () => {
@@ -11,11 +11,13 @@ describe('inMemoryHealthRecordRepo', () => {
   });
 
   it('should save a health record', async () => {
-    const recordData = new HealthRecord('3f8fc01f-3847-4a1e-a5f9-aa4699a15eab', '2024-01-01T10:00:00Z', 72);
+    const recordData = new createHealthRecordDTO('3f8fc01f-3847-4a1e-a5f9-aa4699a15eab', '2024-01-01T10:00:00Z', 72);
     const savedRecord = await repo.save(recordData);
 
     expect(savedRecord).toHaveProperty('id');
     expect(savedRecord.user_id).toBe(recordData.user_id);
+    expect(savedRecord.timestamp).toBe(recordData.timestamp);
+    expect(savedRecord.heartbeat).toBe(recordData.heartbeat);
     expect(records.length).toBe(1);
   });
 
