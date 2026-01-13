@@ -26,7 +26,7 @@ describe('HealthRecordInMemoryIntegration', () => {
     );
 
     expect(result).toHaveLength(2);
-    expect(result.map(r => r.heartbeat)).toEqual([72, 75]);
+    expect(result.map(r => r.heartrate)).toEqual([72, 75]);
   });
 
   it('addHealthRecord et verification avec getHealthRecord', async () => {
@@ -42,7 +42,7 @@ describe('HealthRecordInMemoryIntegration', () => {
     expect(found).toBeDefined();
     expect(found!.id).toBe(created.id);
     expect(found!.timestamp).toBe(sample.timestamp);
-    expect(found!.heartbeat).toBe(sample.heartbeat);
+    expect(found!.heartrate).toBe(sample.heartrate);
     expect(found!.user_id).toBe(sample.user_id);
   });
 });

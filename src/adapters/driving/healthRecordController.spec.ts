@@ -46,7 +46,7 @@ describe('HealthRecordController', () => {
       params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         timestamp: '1985-09-25T17:45:30.005Z',
-        heartbeat: 72,
+        heartrate: 72,
       },
     } as any;
 
@@ -61,7 +61,7 @@ describe('HealthRecordController', () => {
       expect.objectContaining({
         user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60',
         timestamp: '1985-09-25T17:45:30.005Z',
-        heartbeat: 72,
+        heartrate: 72,
       })
     );
 
@@ -73,7 +73,7 @@ describe('HealthRecordController', () => {
     const req = {
       params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
-        heartbeat: 72,
+        heartrate: 72,
       },
     } as any;
 
@@ -86,7 +86,7 @@ describe('HealthRecordController', () => {
     expect(mockPort.createHealthRecord).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: 'user_id, timestamp and heartbeat required',
+      message: 'user_id, timestamp and heartrate required',
     });
   });
 
@@ -136,7 +136,7 @@ describe('HealthRecordController', () => {
       params: { id: 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2' },
       body: {
         timestamp: '1985-10-25T17:45:30.005Z',
-        heartbeat: 72,
+        heartrate: 72,
       },
     } as any;
 
@@ -150,7 +150,7 @@ describe('HealthRecordController', () => {
       'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2',
       {
         timestamp: '1985-10-25T17:45:30.005Z',
-        heartbeat: 72,
+        heartrate: 72,
       }
     );
     expect(res.json).toHaveBeenCalledWith(updatedHealthRecord);

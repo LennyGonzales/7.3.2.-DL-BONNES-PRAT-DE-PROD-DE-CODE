@@ -24,12 +24,12 @@ export class HealthRecordController {
   }
 
   async createHealthRecord(req: Request, res: Response) {
-    const { timestamp, heartbeat } = req.body;
+    const { timestamp, heartrate } = req.body;
     const user_id = req.params.user_id;
-    if (!user_id || !timestamp || !heartbeat) {
-      return res.status(400).json({ message: 'user_id, timestamp and heartbeat required' });
+    if (!user_id || !timestamp || !heartrate) {
+      return res.status(400).json({ message: 'user_id, timestamp and heartrate required' });
     }
-    const created = await this.service.createHealthRecord(new HealthRecord(user_id, timestamp, heartbeat));
+    const created = await this.service.createHealthRecord(new HealthRecord(user_id, timestamp, heartrate));
     res.status(201).json(created);
   }
 
@@ -42,8 +42,8 @@ export class HealthRecordController {
 
   async updateHealthRecord(req: Request, res: Response) {
     const id = req.params.id;
-    const { timestamp, heartbeat } = req.body;
-    const updated = await this.service.updateHealthRecord(id, { timestamp, heartbeat });
+    const { timestamp, heartrate } = req.body;
+    const updated = await this.service.updateHealthRecord(id, { timestamp, heartrate });
     if (!updated) return res.status(404).json({ message: 'Not found' });
     res.json(updated);
   }

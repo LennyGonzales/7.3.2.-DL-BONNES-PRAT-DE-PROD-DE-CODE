@@ -47,7 +47,7 @@ describe('HealthRecordService', () => {
 
   it('createHealthRecord appelle save et retourne le dossier cree', async () => {
     const input = new HealthRecord('3f8fc01f-3847-4a1e-a5f9-aa4699a15eab', '2024-01-01T10:00:00Z', 72);
-    const saved = new HealthRecord(input.user_id, input.timestamp, input.heartbeat, '3319a6b5-1f08-49e3-a415-4338755ac661');
+    const saved = new HealthRecord(input.user_id, input.timestamp, input.heartrate, '3319a6b5-1f08-49e3-a415-4338755ac661');
     mockRepo.save.mockResolvedValue(saved);
     await expect(service.createHealthRecord(input)).resolves.toEqual(saved);
     expect(mockRepo.save).toHaveBeenCalledWith(input);
@@ -57,12 +57,12 @@ describe('HealthRecordService', () => {
     const existingHealthRecord = new HealthRecord('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '2024-01-01T15:00:00Z', 72, 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
     const updates: Partial<Omit<HealthRecord, 'id'>> = {
       timestamp: '2024-03-01T15:00:00Z',
-      heartbeat: 75,
+      heartrate: 75,
     };
     const updatedHealthRecord = new HealthRecord(
       existingHealthRecord.user_id,
       updates.timestamp!,
-      updates.heartbeat!,
+      updates.heartrate!,
       existingHealthRecord.id!,
     );
 
@@ -76,7 +76,7 @@ describe('HealthRecordService', () => {
   it('updateHealthRecord retourne null si le healthrecord n\'existe pas', async () => {
     const updates: Partial<Omit<HealthRecord, 'id'>> = {
       timestamp: '2024-03-01T15:00:00Z',
-      heartbeat: 75,
+      heartrate: 75,
     };
     mockRepo.findById.mockResolvedValue(null);
     await expect(service.updateHealthRecord('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2', updates)).resolves.toBeNull();

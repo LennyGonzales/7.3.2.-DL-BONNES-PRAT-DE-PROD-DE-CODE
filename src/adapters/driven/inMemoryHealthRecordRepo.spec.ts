@@ -17,7 +17,7 @@ describe('inMemoryHealthRecordRepo', () => {
     expect(savedRecord).toHaveProperty('id');
     expect(savedRecord.user_id).toBe(recordData.user_id);
     expect(savedRecord.timestamp).toBe(recordData.timestamp);
-    expect(savedRecord.heartbeat).toBe(recordData.heartbeat);
+    expect(savedRecord.heartrate).toBe(recordData.heartrate);
     expect(records.length).toBe(1);
   });
 
@@ -42,7 +42,7 @@ describe('inMemoryHealthRecordRepo', () => {
       expect(updatedGps).not.toBeNull();
       expect(updatedGps!.id).toBe(existingGps.id);
       expect(updatedGps!.timestamp).toBe('2024-03-01T15:00:00Z');
-      expect(updatedGps!.heartbeat).toBe(85);
+      expect(updatedGps!.heartrate).toBe(85);
     });
   
     it('should delete a gps by id', async () => {

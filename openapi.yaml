@@ -547,11 +547,11 @@ components:
       type: object
       required:
         - timestamp
-        - heartbeat
+        - heartrate
       properties:
         timestamp:
           type: string
-        heartbeat:
+        heartrate:
           type: integer
     PhysicalActivity:
       type: object

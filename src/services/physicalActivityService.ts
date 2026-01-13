@@ -8,7 +8,7 @@ import { Gps } from '../domain/gps';
 
 
 export class PhysicalActivityService implements PhysicalActivityPort {
-    private readonly DEFAULT_ELEVATED_HEARTBEAT_THRESHOLD = 90;
+    private readonly DEFAULT_ELEVATED_heartrate_THRESHOLD = 90;
     private readonly DEFAULT_MAX_ELEVATED_GAP_MS = 5 * 60 * 1000;
 
     constructor(private repoGps: GpsRepositoryPort,
@@ -16,8 +16,8 @@ export class PhysicalActivityService implements PhysicalActivityPort {
 
   async listPhysicalActivitiesByUserId(user_id: string): Promise<PhysicalActivities> {
       const userHealthRecords: HealthRecord[] = await this.repoHealthRecord.findAllByUserId(user_id);
-      const elevatedHeartbeatRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartbeat > this.DEFAULT_ELEVATED_HEARTBEAT_THRESHOLD);
-      const elevatedWithMs = elevatedHeartbeatRecords
+      const elevatedheartrateRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartrate > this.DEFAULT_ELEVATED_heartrate_THRESHOLD);
+      const elevatedWithMs = elevatedheartrateRecords
         .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
         .filter((item) => !Number.isNaN(item.ms))
         .sort((a, b) => a.ms - b.ms);
