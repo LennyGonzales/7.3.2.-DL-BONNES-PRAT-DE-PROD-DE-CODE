@@ -1,29 +1,69 @@
 import { Gps } from '../domain/gps';
 import { PhysicalActivities } from '../domain/PhysicalActivities';
 import { PhysicalActivity } from '../domain/PhysicalActivity';
-import { GpsService } from './gpsService';
+import { HealthRecord } from '../domain/healthRecord';
 import { PhysicalActivityService } from './physicalActivityService';
 
 describe('PhysicalActivityService', () => {
-  let mockRepo: {
-    findAllByUserId: jest.Mock<Promise<PhysicalActivities>, []>;
+  let mockGpsRepo: {
+    findAllByUserId: jest.Mock<Promise<Gps[]>, [string]>;
+    findById: jest.Mock<Promise<Gps | null>, [string]>;
+    save: jest.Mock<Promise<Gps>, [Omit<Gps, 'id'>]>;
+  };
+  let mockHealthRecordRepo: {
+    findAllByUserId: jest.Mock<Promise<HealthRecord[]>, [string]>;
+    findById: jest.Mock<Promise<HealthRecord | null>, [string]>;
+    save: jest.Mock<Promise<HealthRecord>, [Omit<HealthRecord, 'id'>]>;
   };
   let service: PhysicalActivityService;
 
   beforeEach(() => {
-    mockRepo = {
+    mockGpsRepo = {
       findAllByUserId: jest.fn(),
+      findById: jest.fn(),
+      save: jest.fn(),
     };
-    service = new PhysicalActivityService(mockRepo);
+    mockHealthRecordRepo = {
+      findAllByUserId: jest.fn(),
+      findById: jest.fn(),
+      save: jest.fn(),
+    };
+    service = new PhysicalActivityService(mockGpsRepo, mockHealthRecordRepo);
   });
 
-  it('listPhysicalActivitiesByUserId retourne la liste fournie par le repo', async () => {
-    const physicalActivity1 = new PhysicalActivity('1985-09-25 17:45:30.005', '2015-09-25 17:45:30.005', [new Gps('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25 17:45:30.005', '43.6728315', '32.3326411'), new Gps('ea814045-20f9-43e4-b9e6-f75241f501d3', '1985-10-25 15:45:30.005', '21.6328315', '42.3426411'), new Gps('b3cdc353-1ec6-4332-bd16-262bb9aaa269', '2015-09-25 17:45:30.005', '56.6728315', '32.3986411')]);
-    const physicalActivity2 = new PhysicalActivity('1985-09-25 17:45:30.005', '2015-09-25 17:45:30.005', [new Gps('b3cdc353-1ec6-4332-bd16-262bb9aaa269', '2015-09-25 17:45:30.005', '56.6728315', '32.3986411', 'e5c1258c-e5d9-4d8d-b310-f23489facc3c'), new Gps('d15b94ae-7c70-4faf-83ae-f8b7b268b9cd', '2015-09-25 18:45:30.005', '58.6728315', '87.3986411')]);
-    const sample: PhysicalActivities = new PhysicalActivities('ae5a7d56-5ade-42b7-a2c5-284512da3a60', [physicalActivity1, physicalActivity2]);
-    mockRepo.findAllByUserId.mockResolvedValue(sample);
-    await expect(service.listPhysicalActivitiesByUserId('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2')).resolves.toEqual(sample);
-    expect(mockRepo.findAllByUserId).toHaveBeenCalledWith('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+  it('listPhysicalActivitiesByUserId construit les activites depuis les donnees de sante et GPS', async () => {
+    const userId = '3f8fc01f-3847-4a1e-a5f9-aa4699a15eab';
+    const records: HealthRecord[] = [
+      new HealthRecord(userId, '2020-01-01T10:00:00.000Z', 95),
+      new HealthRecord(userId, '2020-01-01T10:03:00.000Z', 91),
+      new HealthRecord(userId, '2020-01-01T10:20:00.000Z', 100),
+      new HealthRecord(userId, '2020-01-01T10:01:00.000Z', 80),
+    ];
+    const gps1 = new Gps(userId, '2020-01-01T10:00:30.000Z', '43.6728315', '32.3326411');
+    const gps2 = new Gps(userId, '2020-01-01T10:02:00.000Z', '21.6328315', '42.3426411');
+    const gps3 = new Gps(userId, '2020-01-01T10:20:00.000Z', '56.6728315', '32.3986411');
+    const gpsOut = new Gps(userId, '2020-01-01T10:10:00.000Z', '58.6728315', '87.3986411');
+
+    mockHealthRecordRepo.findAllByUserId.mockResolvedValue(records);
+    mockGpsRepo.findAllByUserId.mockResolvedValue([gps3, gps1, gpsOut, gps2]);
+
+    const expectedActivity1 = new PhysicalActivity(
+      '2020-01-01T10:00:00.000Z',
+      '2020-01-01T10:03:00.000Z',
+      [
+        { timestamp: gps1.timestamp, latitude: gps1.latitude, longitude: gps1.longitude },
+        { timestamp: gps2.timestamp, latitude: gps2.latitude, longitude: gps2.longitude },
+      ],
+    );
+    const expectedActivity2 = new PhysicalActivity(
+      '2020-01-01T10:20:00.000Z',
+      '2020-01-01T10:20:00.000Z',
+      [{ timestamp: gps3.timestamp, latitude: gps3.latitude, longitude: gps3.longitude }],
+    );
+    const expected = new PhysicalActivities(userId, [expectedActivity1, expectedActivity2]);
+
+    await expect(service.listPhysicalActivitiesByUserId(userId)).resolves.toEqual(expected);
+    expect(mockHealthRecordRepo.findAllByUserId).toHaveBeenCalledWith(userId);
+    expect(mockGpsRepo.findAllByUserId).toHaveBeenCalledWith(userId);
   });
 });
-

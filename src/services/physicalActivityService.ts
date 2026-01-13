@@ -51,9 +51,13 @@ export class PhysicalActivityService implements PhysicalActivityPort {
         const endAt = group[group.length - 1].timestamp;
         const startMs = Date.parse(startAt);
         const endMs = Date.parse(endAt);
-        const itinerary = gpsWithMs
-          .filter((item) => item.ms >= startMs && item.ms <= endMs)
-          .map((item) => item.gps);
+      const itinerary = gpsWithMs
+        .filter((item) => item.ms >= startMs && item.ms <= endMs)
+        .map((item) => ({
+          timestamp: item.gps.timestamp,
+          latitude: item.gps.latitude,
+          longitude: item.gps.longitude,
+        }));
         return new PhysicalActivity(startAt, endAt, itinerary);
       });
 
