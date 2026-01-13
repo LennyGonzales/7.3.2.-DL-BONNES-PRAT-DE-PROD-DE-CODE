@@ -8,15 +8,15 @@ import { Gps } from '../domain/gps';
 
 
 export class PhysicalActivityService implements PhysicalActivityPort {
-  constructor(private repoGps: GpsRepositoryPort,
+    private readonly DEFAULT_ELEVATED_HEARTBEAT_THRESHOLD = 90;
+    private readonly DEFAULT_MAX_ELEVATED_GAP_MS = 5 * 60 * 1000;
+
+    constructor(private repoGps: GpsRepositoryPort,
               private repoHealthRecord: HealthRecordRepositoryPort) {}
 
   async listPhysicalActivitiesByUserId(user_id: string): Promise<PhysicalActivities> {
-      const elevatedHeartbeatThreshold = 90;
-      const maxElevatedGapMs = 5 * 60 * 1000;
-
       const userHealthRecords: HealthRecord[] = await this.repoHealthRecord.findAllByUserId(user_id);
-      const elevatedHeartbeatRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartbeat > elevatedHeartbeatThreshold);
+      const elevatedHeartbeatRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartbeat > this.DEFAULT_ELEVATED_HEARTBEAT_THRESHOLD);
       const elevatedWithMs = elevatedHeartbeatRecords
         .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
         .filter((item) => !Number.isNaN(item.ms))
@@ -27,7 +27,7 @@ export class PhysicalActivityService implements PhysicalActivityPort {
       let lastMs: number | null = null;
 
       for (const item of elevatedWithMs) {
-        if (lastMs === null || item.ms - lastMs <= maxElevatedGapMs) {
+        if (lastMs === null || item.ms - lastMs <= this.DEFAULT_MAX_ELEVATED_GAP_MS) {
           currentGroup.push(item.record);
         } else {
           activityGroups.push(currentGroup);
