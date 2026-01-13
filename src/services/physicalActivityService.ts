@@ -1,12 +1,62 @@
-import { Gps } from '../domain/gps';
 import { PhysicalActivities } from '../domain/PhysicalActivities';
-import { PhysicalActivityRepositoryPort } from '../ports/driven/physicalActivityRepositoryPort';
+import { PhysicalActivity } from '../domain/PhysicalActivity';
+import { GpsRepositoryPort } from '../ports/driven/gpsRepositoryPort';
 import { PhysicalActivityPort } from '../ports/driving/physicalActivityPort';
+import { HealthRecordRepositoryPort } from '../ports/driven/healthRecordRepositoryPort';
+import { HealthRecord } from '../domain/healthRecord';
+import { Gps } from '../domain/gps';
+
 
 export class PhysicalActivityService implements PhysicalActivityPort {
-  constructor(private repo: PhysicalActivityRepositoryPort) {}
+  constructor(private repoGps: GpsRepositoryPort,
+              private repoHealthRecord: HealthRecordRepositoryPort) {}
 
   async listPhysicalActivitiesByUserId(user_id: string): Promise<PhysicalActivities> {
-     return this.repo.findAllByUserId(user_id);
+      const elevatedHeartbeatThreshold = 90;
+      const maxElevatedGapMs = 5 * 60 * 1000;
+
+      const userHealthRecords: HealthRecord[] = await this.repoHealthRecord.findAllByUserId(user_id);
+      const elevatedHeartbeatRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartbeat > elevatedHeartbeatThreshold);
+      const elevatedWithMs = elevatedHeartbeatRecords
+        .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
+        .filter((item) => !Number.isNaN(item.ms))
+        .sort((a, b) => a.ms - b.ms);
+
+      const activityGroups: HealthRecord[][] = [];
+      let currentGroup: HealthRecord[] = [];
+      let lastMs: number | null = null;
+
+      for (const item of elevatedWithMs) {
+        if (lastMs === null || item.ms - lastMs <= maxElevatedGapMs) {
+          currentGroup.push(item.record);
+        } else {
+          activityGroups.push(currentGroup);
+          currentGroup = [item.record];
+        }
+        lastMs = item.ms;
+      }
+
+      if (currentGroup.length > 0) {
+        activityGroups.push(currentGroup);
+      }
+
+      const userGps: Gps[] = await this.repoGps.findAllByUserId(user_id);
+      const gpsWithMs = userGps
+        .map((gps) => ({ gps, ms: Date.parse(gps.timestamp) }))
+        .filter((item) => !Number.isNaN(item.ms))
+        .sort((a, b) => a.ms - b.ms);
+
+      const physicalActivities: PhysicalActivity[] = activityGroups.map((group) => {
+        const startAt = group[0].timestamp;
+        const endAt = group[group.length - 1].timestamp;
+        const startMs = Date.parse(startAt);
+        const endMs = Date.parse(endAt);
+        const itinerary = gpsWithMs
+          .filter((item) => item.ms >= startMs && item.ms <= endMs)
+          .map((item) => item.gps);
+        return new PhysicalActivity(startAt, endAt, itinerary);
+      });
+
+      return new PhysicalActivities(user_id, physicalActivities);
   }
 }
