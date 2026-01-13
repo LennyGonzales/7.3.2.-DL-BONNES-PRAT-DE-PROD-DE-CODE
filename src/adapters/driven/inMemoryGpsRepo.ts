@@ -19,4 +19,19 @@ export class inMemoryGpsRepo implements GpsRepositoryPort {
     this.store.push(newGps);
     return newGps;
   }
+
+  async update(id: string, gps: Partial<Omit<Gps, 'id'>>): Promise<Gps | null> {
+    const index = this.store.findIndex((s) => s.id === id);
+    if (index === -1) return null;
+    const updatedGps = { ...this.store[index], ...gps };
+    this.store[index] = updatedGps;
+    return { ...updatedGps };
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.store.findIndex((s) => s.id === id);
+    if (index === -1) return false;
+    this.store.splice(index, 1);
+    return true;
+  }
 }

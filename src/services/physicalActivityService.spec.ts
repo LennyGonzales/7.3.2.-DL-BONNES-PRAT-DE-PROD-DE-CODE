@@ -9,6 +9,8 @@ describe('PhysicalActivityService', () => {
     findAllByUserId: jest.Mock<Promise<Gps[]>, [string]>;
     findById: jest.Mock<Promise<Gps | null>, [string]>;
     save: jest.Mock<Promise<Gps>, [Omit<Gps, 'id'>]>;
+    update: jest.Mock<Promise<Gps | null>, [string, Partial<Omit<Gps, 'id'>>]>;
+    delete: jest.Mock<Promise<boolean>, [string]>;
   };
   let mockHealthRecordRepo: {
     findAllByUserId: jest.Mock<Promise<HealthRecord[]>, [string]>;
@@ -22,6 +24,8 @@ describe('PhysicalActivityService', () => {
       findAllByUserId: jest.fn(),
       findById: jest.fn(),
       save: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
     mockHealthRecordRepo = {
       findAllByUserId: jest.fn(),

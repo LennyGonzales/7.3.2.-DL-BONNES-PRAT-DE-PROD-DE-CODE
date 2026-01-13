@@ -38,4 +38,19 @@ export class GpsController {
     if (!found) return res.status(404).json({ message: 'Not found' });
     res.json(found);
   }
+
+  async updateGps(req: Request, res: Response) {
+    const id = req.params.id;
+    const { timestamp, latitude, longitude } = req.body;
+    const updated = await this.service.updateGps(id, { timestamp, latitude, longitude });
+    if (!updated) return res.status(404).json({ message: 'Not found' });
+    res.json(updated);
+  }
+
+  async deleteGps(req: Request, res: Response) {
+    const id = req.params.id;
+    const deleted = await this.service.deleteGps(id);
+    if (!deleted) return res.status(404).json({ message: 'Not found' });
+    res.status(204).send();
+  }
 }
