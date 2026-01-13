@@ -1,0 +1,15 @@
+meta {
+  name: Get GPS point
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:3000/gps/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{gps_id}}
+}

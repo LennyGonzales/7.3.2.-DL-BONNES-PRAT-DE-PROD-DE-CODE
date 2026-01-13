@@ -1,0 +1,22 @@
+meta {
+  name: Update medical record
+  type: http
+  seq: 13
+}
+
+patch {
+  url: http://localhost:3000/health_records/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: {{medical_id}}
+}
+
+body:json {
+  {
+    "timestamp": "2024-01-01T12:00:00Z",
+    "heartbeat": 72
+  }
+}

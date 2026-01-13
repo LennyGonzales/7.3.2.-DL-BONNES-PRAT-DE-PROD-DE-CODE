@@ -1,0 +1,29 @@
+meta {
+  name: Seed GPS 1
+  type: http
+  seq: 16
+}
+
+post {
+  url: http://localhost:3000/users/:user_id/gps
+  body: json
+  auth: none
+}
+
+params:path {
+  user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
+}
+
+body:json {
+  {
+    "timestamp": "2020-01-01T10:00:30.000Z",
+    "latitude": "43.6728315",
+    "longitude": "32.3326411"
+  }
+}
+
+script:post-response {
+  if (res && res.body && res.body.id) {
+    bru.setVar('gps_id', res.body.id);
+  }
+}

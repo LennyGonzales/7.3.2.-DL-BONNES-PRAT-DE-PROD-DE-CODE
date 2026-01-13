@@ -1,0 +1,15 @@
+meta {
+  name: List user medical records
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:3000/users/:user_id/health_records
+  body: none
+  auth: none
+}
+
+params:path {
+  user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
+}
