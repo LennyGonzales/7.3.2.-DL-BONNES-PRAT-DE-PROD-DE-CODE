@@ -19,7 +19,7 @@ export class HealthRecordController {
 
   async getAllHealthRecords(req: Request, res: Response) {
     const user_id = req.params.user_id;
-    const list = await this.service.listHealthRecords(user_id);
+    const list = await this.service.listHealthRecordsByUserId(user_id);
     res.json(list);
   }
 
@@ -29,7 +29,7 @@ export class HealthRecordController {
     if (!user_id || !timestamp || !heartbeat) {
       return res.status(400).json({ message: 'user_id, timestamp and heartbeat required' });
     }
-    const created = await service.createHealthRecord(new HealthRecord(user_id, timestamp, heartbeat));
+    const created = await this.service.createHealthRecord(new HealthRecord(user_id, timestamp, heartbeat));
     res.status(201).json(created);
   }
 

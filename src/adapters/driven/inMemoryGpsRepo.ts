@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Gps } from '../../domain/gps';
-import { GpsRepositoryPort } from '../../ports/driven/GpsRepositoryPort';
+import { GpsRepositoryPort } from '../../ports/driven/gpsRepositoryPort';
 
 const store: Gps[] = [];
 

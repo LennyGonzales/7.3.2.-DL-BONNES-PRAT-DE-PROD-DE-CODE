@@ -7,11 +7,14 @@ import { AddressController } from './adapters/driving/addressController';
 import { InMemoryAddressRepo } from "./adapters/driven/inMemoryAddressRepo";
 import { AddressService } from "./services/addressService";
 import { GpsController } from './adapters/driving/gpsController';
+import { HealthRecordController } from './adapters/driving/healthRecordController';
 import { GpsService } from './services/gpsService';
+import { HealthRecordService } from './services/healthRecordService';
 import { inMemoryGpsRepo } from './adapters/driven/inMemoryGpsRepo';
 import { inMemoryPhysicalActivityRepo } from './adapters/driven/inMemoryPhysicalActivityRepo';
 import { PhysicalActivityController } from './adapters/driving/physicalActivityController';
 import { PhysicalActivityService } from './services/physicalActivityService';
+import { inMemoryHealthRecordRepo } from './adapters/driven/inMemoryHealthRecordRepo';
 
 const app = express();
 app.use(express.json());
@@ -19,6 +22,7 @@ app.use(express.json());
 const addressRepo = new InMemoryAddressRepo();
 const gpsRepo = new inMemoryGpsRepo();
 const physicalActivityRepository = new inMemoryPhysicalActivityRepo();
+const healthRecordRepo = new inMemoryHealthRecordRepo();
 
 const file  = fs.readFileSync('./openapi.yaml', 'utf8')
 const swaggerDocument = YAML.parse(file)
@@ -36,6 +40,10 @@ gpsController.registerRoutes(app);
 const physicalActivityService = new PhysicalActivityService(physicalActivityRepository);
 const physicalActivityController = new PhysicalActivityController(physicalActivityService);
 physicalActivityController.registerRoutes(app);
+
+const healthRecordService = new HealthRecordService(healthRecordRepo);
+const healthRecordController = new HealthRecordController(healthRecordService);
+healthRecordController.registerRoutes(app);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

@@ -1,5 +1,5 @@
 import { Gps } from '../domain/gps';
-import { GpsRepositoryPort } from '../ports/driven/GpsRepositoryPort';
+import { GpsRepositoryPort } from '../ports/driven/gpsRepositoryPort';
 import { GpsPort } from '../ports/driving/gpsPort';
 
 export class GpsService implements GpsPort {
