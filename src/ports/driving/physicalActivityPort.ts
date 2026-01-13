@@ -1,5 +1,5 @@
 import { PhysicalActivities } from '../../domain/PhysicalActivities';
 
 export interface PhysicalActivityPort {
-  listPhysicalActivity(): Promise<PhysicalActivities>;
+  listPhysicalActivityByUserId(user_id: string): Promise<PhysicalActivities>;
 }

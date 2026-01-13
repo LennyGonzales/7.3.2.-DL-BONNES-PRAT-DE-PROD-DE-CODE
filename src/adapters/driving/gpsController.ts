@@ -13,11 +13,12 @@ export class GpsController {
   registerRoutes(app: Express) {
     app.get('/users/:user_id/gps', this.getAllGps.bind(this));
     app.post('/users/:user_id/gps', this.createGps.bind(this));
-    app.get('/users/:user_id/gps/:id', this.getGps.bind(this));
+    app.get('/gps/:id', this.getGps.bind(this));
   }
 
   async getAllGps(req: Request, res: Response) {
-    const list = await this.service.listGps();
+    const user_id = req.params.user_id;
+    const list = await this.service.listGpsByUserId(user_id);
     res.json(list);
   }
 
@@ -27,7 +28,7 @@ export class GpsController {
     if (!user_id || !timestamp || !latitude || !longitude) {
       return res.status(400).json({ message: 'user_id, timestamp, latitude and longitude required' });
     }
-    const created = await service.createGps(new Gps(user_id, timestamp, latitude, longitude));
+    const created = await this.service.createGps(new Gps(user_id, timestamp, latitude, longitude));
     res.status(201).json(created);
   }
 

@@ -1,5 +1,5 @@
 import { Address } from '../../domain/address';
-import { AddressRepositoryPort } from '../../ports/driven/repoPort';
+import { AddressRepositoryPort } from '../../ports/driven/addressRepositoryPort';
 import { v4 as uuidv4 } from 'uuid';
 
 const store: Address[] = [];

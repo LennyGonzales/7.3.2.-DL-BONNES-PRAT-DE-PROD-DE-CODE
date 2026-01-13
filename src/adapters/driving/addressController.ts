@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import { InMemoryAddressRepo } from '../driven/inMemoryAddressRepo';
 import { AddressService } from '../../services/addressService';
 import { Address } from "../../domain/address";
-import { AddressRepositoryPort } from "../../ports/driven/repoPort";
+import { AddressRepositoryPort } from "../../ports/driven/addressRepositoryPort";
 import { AddressPort } from "../../ports/driving/addressPort";
 import {Request, Response} from "express";
 

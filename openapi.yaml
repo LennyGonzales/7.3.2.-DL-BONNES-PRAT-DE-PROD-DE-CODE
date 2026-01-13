@@ -101,7 +101,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /users/{user_id}/gps/{id}:
+  /gps/{id}:
     get:
       tags:
         - GPS
@@ -109,12 +109,6 @@ paths:
       description: Return a GPS record by id for the user.
       operationId: find Gps by id
       parameters:
-        - name: user_id
-          in: path
-          description: ID of User
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           description: ID of Gps to fetch
@@ -152,6 +146,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - GPS
+      summary: Update GPS point
+      description: Update a GPS record by id for the user.
+      operationId: updateGps
+      parameters:
+        - name: id
+          in: path
+          description: ID of Gps to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Gps to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGps'
+      responses:
+        '200':
+          description: gps response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gps'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: gps not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - GPS
@@ -159,12 +204,6 @@ paths:
       description: Delete a GPS record by id for the user.
       operationId: deleteGps
       parameters:
-        - name: user_id
-          in: path
-          description: ID of User
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           description: ID of Gps to delete
@@ -198,7 +237,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /users/{user_id}/medical:
+  /users/{user_id}/health_records:
     get:
       tags:
         - Health Records
@@ -290,7 +329,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /users/{user_id}/medical/{id}:
+  /health_records/{id}:
     get:
       tags:
         - Health Records
@@ -298,12 +337,6 @@ paths:
       description: Return a medical record by id for the user.
       operationId: find Medical by id
       parameters:
-        - name: user_id
-          in: path
-          description: ID of User
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           description: ID of Medical to fetch
@@ -341,6 +374,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - Health Records
+      summary: Update medical record
+      description: Update a medical record by id for the user.
+      operationId: updateMedical
+      parameters:
+        - name: id
+          in: path
+          description: ID of Medical to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Medical to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMedical'
+      responses:
+        '200':
+          description: medical response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medical'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: medical record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - Health Records
@@ -348,12 +432,6 @@ paths:
       description: Delete a medical record by id for the user.
       operationId: deleteMedical
       parameters:
-        - name: user_id
-          in: path
-          description: ID of User
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           description: ID of Medical

@@ -14,11 +14,12 @@ export class HealthRecordController {
   registerRoutes(app: Express) {
     app.get('/users/:user_id/health_records', this.getAllHealthRecords.bind(this));
     app.post('/users/:user_id/health_records', this.createHealthRecord.bind(this));
-    app.get('/users/:user_id/health_records/:id', this.getHealthRecord.bind(this));
+    app.get('/health_records/:id', this.getHealthRecord.bind(this));
   }
 
   async getAllHealthRecords(req: Request, res: Response) {
-    const list = await this.service.listHealthRecords();
+    const user_id = req.params.user_id;
+    const list = await this.service.listHealthRecords(user_id);
     res.json(list);
   }
 

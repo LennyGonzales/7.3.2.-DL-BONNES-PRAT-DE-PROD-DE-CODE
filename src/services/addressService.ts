@@ -1,5 +1,5 @@
 import { Address } from '../domain/address';
-import { AddressRepositoryPort } from '../ports/driven/repoPort';
+import { AddressRepositoryPort } from '../ports/driven/addressRepositoryPort';
 import { AddressPort } from "../ports/driving/addressPort";
 
 export class AddressService implements AddressPort {
