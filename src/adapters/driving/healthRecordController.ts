@@ -39,4 +39,19 @@ export class HealthRecordController {
     if (!found) return res.status(404).json({ message: 'Not found' });
     res.json(found);
   }
+
+  async updateHealthRecord(req: Request, res: Response) {
+    const id = req.params.id;
+    const { timestamp, heartbeat } = req.body;
+    const updated = await this.service.updateHealthRecord(id, { timestamp, heartbeat });
+    if (!updated) return res.status(404).json({ message: 'Not found' });
+    res.json(updated);
+  }
+
+  async deleteHealthRecord(req: Request, res: Response) {
+    const id = req.params.id;
+    const deleted = await this.service.deleteHealthRecord(id);
+    if (!deleted) return res.status(404).json({ message: 'Not found' });
+    res.status(204).send();
+  }
 }

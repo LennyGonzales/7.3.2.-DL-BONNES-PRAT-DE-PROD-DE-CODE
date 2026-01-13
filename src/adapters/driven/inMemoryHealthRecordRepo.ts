@@ -19,4 +19,19 @@ export class inMemoryHealthRecordRepo implements HealthRecordRepositoryPort {
         this.store.push(newHealthRecord);
         return newHealthRecord;
     }
+
+    async update(id: string, healthRecord: Partial<Omit<HealthRecord, 'id'>>): Promise<HealthRecord | null> {
+        const index = this.store.findIndex((s) => s.id === id);
+        if (index === -1) return null;
+        const updatedHealthRecord = { ...this.store[index], ...healthRecord };
+        this.store[index] = updatedHealthRecord;
+        return { ...updatedHealthRecord };
+    }
+
+    async delete(id: string): Promise<boolean> {
+        const index = this.store.findIndex((s) => s.id === id);
+        if (index === -1) return false;
+        this.store.splice(index, 1);
+        return true;
+    }
 }

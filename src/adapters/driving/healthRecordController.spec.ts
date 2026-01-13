@@ -1,6 +1,3 @@
-import { GpsController } from './gpsController';
-import { Gps } from '../../domain/gps';
-import { GpsPort } from '../../ports/driving/gpsPort';
 import { HealthRecordController } from './healthRecordController';
 import { HealthRecordPort } from '../../ports/driving/healthRecordPort';
 import { HealthRecord } from '../../domain/healthRecord';
@@ -14,6 +11,8 @@ describe('HealthRecordController', () => {
       listHealthRecordsByUserId: jest.fn(),
       getHealthRecord: jest.fn(),
       createHealthRecord: jest.fn(),
+      updateHealthRecord: jest.fn(),
+      deleteHealthRecord: jest.fn(),
     };
 
     controller = new HealthRecordController(mockPort);
@@ -125,6 +124,69 @@ describe('HealthRecordController', () => {
     await controller.getHealthRecord(req, res);
 
     expect(mockPort.getHealthRecord).toHaveBeenCalledWith('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd4');
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Not found' });
+  });
+
+  it('updateHealthRecord met à jour un health record existant', async () => {
+    const updatedHealthRecord = new HealthRecord('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-10-25T17:45:30.005Z', 72, 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    mockPort.updateHealthRecord.mockResolvedValue(updatedHealthRecord);
+
+    const req = {
+      params: { id: 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2' },
+      body: {
+        timestamp: '1985-10-25T17:45:30.005Z',
+        heartbeat: 72,
+      },
+    } as any;
+
+    const res = {
+      json: jest.fn(),
+    } as any;
+
+    await controller.updateHealthRecord(req, res);
+
+    expect(mockPort.updateHealthRecord).toHaveBeenCalledWith(
+      'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2',
+      {
+        timestamp: '1985-10-25T17:45:30.005Z',
+        heartbeat: 72,
+      }
+    );
+    expect(res.json).toHaveBeenCalledWith(updatedHealthRecord);
+  });
+
+  it('deleteHealthRecord supprime un health record existant', async () => {
+    mockPort.deleteHealthRecord.mockResolvedValue(true);
+    const req = {
+      params: { id: 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2' },
+    } as any;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    } as any;
+    await controller.deleteHealthRecord(req, res);
+
+    expect(mockPort.deleteHealthRecord).toHaveBeenCalledWith('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.send).toHaveBeenCalled();
+  });
+
+  it('deleteHealthRecord retourne 404 si health record introuvable', async () => {
+    mockPort.deleteHealthRecord.mockResolvedValue(false);
+
+    const req = {
+      params: { id: 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd4' },
+    } as any;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as any;
+
+    await controller.deleteHealthRecord(req, res);
+
+    expect(mockPort.deleteHealthRecord).toHaveBeenCalledWith('d63a7ea6-6e0d-4183-ad6b-b6f21c8cecd4');
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: 'Not found' });
   });

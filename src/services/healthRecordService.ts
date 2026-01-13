@@ -17,4 +17,16 @@ export class HealthRecordService implements HealthRecordPort {
         // Business rules could be applied here
         return this.repo.save(input);
     }
+
+    async updateHealthRecord(id: string, input: Partial<Omit<HealthRecord, 'id'>>): Promise<HealthRecord | null> {
+        const existingHealthRecord = await this.repo.findById(id);
+        if (!existingHealthRecord) return null;
+        return this.repo.update(id, input);
+    }
+
+    async deleteHealthRecord(id: string): Promise<boolean> {
+        const existingHealthRecord = await this.repo.findById(id);
+        if (!existingHealthRecord) return false;
+        return this.repo.delete(id);
+    }
 }
