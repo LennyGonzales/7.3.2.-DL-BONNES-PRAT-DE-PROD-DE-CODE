@@ -5,12 +5,12 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/users/:user_id/gps
+  url: http://localhost:3000/gps?user_id=3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
   body: json
   auth: none
 }
 
-params:path {
+params:query {
   user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
 }
 
@@ -25,11 +25,11 @@ tests {
   test('status', function () {
     expect(res.status).to.equal(400);
   });
-
+  
   test('error message', function () {
     expect(res.body).to.deep.equal({
       message: 'user_id, timestamp, latitude and longitude required',
     });
   });
-
+  
 }

@@ -11,31 +11,33 @@ export class GpsController {
   }
 
   registerRoutes(app: Express) {
-    app.get('/users/:user_id/gps', this.getAllGps.bind(this));
-    app.post('/users/:user_id/gps', this.createGps.bind(this));
+    app.get('/gps', this.getAllGps.bind(this));
+    app.post('/gps', this.createGps.bind(this));
     app.get('/gps/:id', this.getGps.bind(this));
     app.delete('/gps/:id', this.deleteGps.bind(this));
     app.patch('/gps/:id', this.updateGps.bind(this));
   }
 
   async getAllGps(req: Request, res: Response) {
-    const user_id = req.params.user_id;
+    const user_id = String(req.query.user_id || '');
     if (!user_id) {
       return res.status(400).json({ message: 'user_id required' });
     }
 
     try {
       const list = await this.service.listGpsByUserId(user_id);
+      if (list.length === 0) {
+        return res.status(404).json({ message: 'Not found' });
+      }
       return res.json(list);
     } catch (error) {
       return res.status(500).json({ message: 'internal server error' });
     }
   }
 
-
   async createGps(req: Request, res: Response) {
     const { timestamp, latitude, longitude } = req.body;
-    const user_id = req.params.user_id;
+    const user_id = String(req.query.user_id || '');
     if (!user_id || !timestamp || !latitude || !longitude) {
       return res.status(400).json({ message: 'user_id, timestamp, latitude and longitude required' });
     }

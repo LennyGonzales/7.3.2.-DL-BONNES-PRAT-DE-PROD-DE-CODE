@@ -5,12 +5,12 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/users/:user_id/gps
+  url: http://localhost:3000/gps?user_id=3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
   body: json
   auth: none
 }
 
-params:path {
+params:query {
   user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
 }
 
@@ -32,7 +32,7 @@ tests {
   test('status', function () {
     expect([200, 201]).to.include(res.status);
   });
-
+  
   test('body shape', function () {
     expect(res.body).to.be.an('object');
     expect(res.body).to.have.property('id');
@@ -41,5 +41,5 @@ tests {
     expect(res.body).to.have.property('latitude');
     expect(res.body).to.have.property('longitude');
   });
-
+  
 }

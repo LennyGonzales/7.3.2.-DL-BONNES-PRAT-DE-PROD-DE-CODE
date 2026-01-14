@@ -25,7 +25,7 @@ describe('HealthRecordController', () => {
     mockPort.listHealthRecordsByUserId.mockResolvedValue(sample);
 
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
     } as any;
 
     const res = {
@@ -44,7 +44,7 @@ describe('HealthRecordController', () => {
     mockPort.createHealthRecord.mockResolvedValue(created);
 
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         timestamp: '1985-09-25T17:45:30.005Z',
         heartrate: 72,
@@ -72,7 +72,7 @@ describe('HealthRecordController', () => {
 
   it('createHealthRecord retourne 400 si champs manquants', async () => {
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         heartrate: 72,
       },

@@ -5,12 +5,12 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/users/:user_id/health_records
+  url: http://localhost:3000/health_records?user_id=3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
   body: none
   auth: none
 }
 
-params:path {
+params:query {
   user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
 }
 

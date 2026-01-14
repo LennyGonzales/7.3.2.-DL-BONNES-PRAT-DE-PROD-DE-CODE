@@ -25,7 +25,7 @@ describe('GpsController', () => {
     mockPort.listGpsByUserId.mockResolvedValue(sample);
 
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
     } as any;
 
     const res = {
@@ -44,7 +44,7 @@ describe('GpsController', () => {
     mockPort.createGps.mockResolvedValue(created);
 
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         timestamp: '1985-09-25T17:45:30.005Z',
         latitude: '43.6728315',
@@ -75,7 +75,7 @@ describe('GpsController', () => {
 
   it('createGps retourne 400 si champs manquants', async () => {
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         latitude: '43.6728315',
       },
@@ -100,7 +100,7 @@ describe('GpsController', () => {
     mockPort.listGpsByUserId.mockResolvedValue([duplicate]);
 
     const req = {
-      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      query: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
       body: {
         timestamp: '1985-09-25T17:45:30.005Z',
         latitude: '43.6728315',

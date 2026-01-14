@@ -12,15 +12,15 @@ export class HealthRecordController {
   }
 
   registerRoutes(app: Express) {
-    app.get('/users/:user_id/health_records', this.getAllHealthRecords.bind(this));
-    app.post('/users/:user_id/health_records', this.createHealthRecord.bind(this));
+    app.get('/health_records', this.getAllHealthRecords.bind(this));
+    app.post('/health_records', this.createHealthRecord.bind(this));
     app.get('/health_records/:id', this.getHealthRecord.bind(this));
     app.delete('/health_records/:id', this.deleteHealthRecord.bind(this));
     app.patch('/health_records/:id', this.updateHealthRecord.bind(this));
   }
 
   async getAllHealthRecords(req: Request, res: Response) {
-    const user_id = req.params.user_id;
+    const user_id = String(req.query.user_id || '');
     if (!user_id) {
       return res.status(400).json({ message: 'user_id required' });
     }
@@ -35,7 +35,7 @@ export class HealthRecordController {
 
   async createHealthRecord(req: Request, res: Response) {
     const { timestamp, heartrate } = req.body;
-    const user_id = req.params.user_id;
+    const user_id = String(req.query.user_id || '');
     if (!user_id || !timestamp || !heartrate) {
       return res.status(400).json({ message: 'user_id, timestamp and heartrate required' });
     }

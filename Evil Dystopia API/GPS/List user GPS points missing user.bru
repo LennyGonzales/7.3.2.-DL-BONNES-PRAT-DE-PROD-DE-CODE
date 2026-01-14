@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/users/:user_id/gps
+  url: http://localhost:3000/gps?user_id=065352a7-d35a-4d76-893c-7d8e98dc08fd
   body: none
   auth: none
 }
 
-params:path {
-  user_id:
+params:query {
+  user_id: 065352a7-d35a-4d76-893c-7d8e98dc08fd
 }
 
 tests {
@@ -20,7 +20,7 @@ tests {
   });
 
   test('error message', function () {
-    expect(res.body).to.contain('Cannot GET');
+    expect(res.body).to.deep.equal({ message: 'Not found' });
   });
 
 }
