@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "Evil Distopia API",
+  "name": "Evil Dystopia API",
   "type": "collection",
   "ignore": [
     "node_modules",
