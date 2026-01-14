@@ -1,0 +1,2 @@
+export const ELEVATED_HEARTRATE_THRESHOLD = 90;
+export const MAX_ELEVATED_GAP_MS = 5 * 60 * 1000;

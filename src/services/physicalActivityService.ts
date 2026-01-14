@@ -5,18 +5,16 @@ import { PhysicalActivityPort } from '../ports/driving/physicalActivityPort';
 import { HealthRecordRepositoryPort } from '../ports/driven/healthRecordRepositoryPort';
 import { HealthRecord } from '../domain/healthRecord';
 import { Gps } from '../domain/gps';
+import { ELEVATED_HEARTRATE_THRESHOLD, MAX_ELEVATED_GAP_MS } from '../config/physicalActivityConfig';
 
 
 export class PhysicalActivityService implements PhysicalActivityPort {
-    private readonly DEFAULT_ELEVATED_heartrate_THRESHOLD = 90;
-    private readonly DEFAULT_MAX_ELEVATED_GAP_MS = 5 * 60 * 1000;
-
     constructor(private repoGps: GpsRepositoryPort,
               private repoHealthRecord: HealthRecordRepositoryPort) {}
 
   async listPhysicalActivitiesByUserId(user_id: string): Promise<PhysicalActivities> {
       const userHealthRecords: HealthRecord[] = await this.repoHealthRecord.findAllByUserId(user_id);
-      const elevatedheartrateRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartrate > this.DEFAULT_ELEVATED_heartrate_THRESHOLD);
+      const elevatedheartrateRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartrate > ELEVATED_HEARTRATE_THRESHOLD);
       const elevatedWithMs = elevatedheartrateRecords
         .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
         .filter((item) => !Number.isNaN(item.ms))
@@ -27,7 +25,7 @@ export class PhysicalActivityService implements PhysicalActivityPort {
       let lastMs: number | null = null;
 
       for (const item of elevatedWithMs) {
-        if (lastMs === null || item.ms - lastMs <= this.DEFAULT_MAX_ELEVATED_GAP_MS) {
+        if (lastMs === null || item.ms - lastMs <= MAX_ELEVATED_GAP_MS) {
           currentGroup.push(item.record);
         } else {
           activityGroups.push(currentGroup);
