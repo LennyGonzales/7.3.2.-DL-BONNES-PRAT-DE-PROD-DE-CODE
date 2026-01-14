@@ -13,3 +13,25 @@ get {
 params:path {
   id: {{gps_id}}
 }
+
+tests {
+  test('status', function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test('body shape', function () {
+    expect(res.body).to.be.an('object');
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('user_id');
+    expect(res.body).to.have.property('timestamp');
+    expect(res.body).to.have.property('latitude');
+    expect(res.body).to.have.property('longitude');
+  });
+
+  test('error shape when error', function () {
+    if (res.status >= 400) {
+      expect(res.body).to.be.an('object');
+      expect(res.body).to.have.property('message');
+    }
+  });
+}

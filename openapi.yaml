@@ -572,11 +572,11 @@ components:
       type: object
       required:
         - user_id
-        - physical_activiies
+        - physical_activities
       properties:
         user_id:
           type: string
-        physical_activiies:
+        physical_activities:
           type: array
           items:
             $ref: '#/components/schemas/PhysicalActivity'

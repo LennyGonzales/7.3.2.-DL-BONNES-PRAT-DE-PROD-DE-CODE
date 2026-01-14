@@ -13,3 +13,21 @@ delete {
 params:path {
   id: {{gps_seed_1}}
 }
+
+tests {
+  test('status', function () {
+    expect(res.status).to.equal(204);
+  });
+
+    test('empty body', function () {
+    const empty = res.body == null || res.body === '' || (typeof res.body === 'object' && Object.keys(res.body).length === 0);
+    expect(empty).to.equal(true);
+  });
+
+  test('error shape when error', function () {
+    if (res.status >= 400) {
+      expect(res.body).to.be.an('object');
+      expect(res.body).to.have.property('message');
+    }
+  });
+}
