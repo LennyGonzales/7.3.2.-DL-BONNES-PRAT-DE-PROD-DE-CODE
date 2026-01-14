@@ -1,0 +1,72 @@
+name: Tests Execution
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+    name: npm test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test
+
+  e2e-tests:
+    name: Bruno E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and start API
+        run: |
+          mkdir -p data
+          npm run build
+          npm start &
+          echo $! > server.pid
+
+      - name: Wait for API
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://localhost:3000/docs >/dev/null; then
+              echo "API is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not start" >&2
+          exit 1
+
+      - name: Run Bruno collection
+        run: npx --yes @usebruno/cli run . -r --sandbox=developer
+        working-directory: Evil Dystopia API
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill "$(cat server.pid)" || true
+          fi
