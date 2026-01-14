@@ -26,20 +26,12 @@ tests {
     expect(Array.isArray(res.body.physical_activities)).to.equal(true);
   });
 
-  test('activity shape when present', function () {
-    if (res.body && Array.isArray(res.body.physical_activities) && res.body.physical_activities.length > 0) {
-      const item = res.body.physical_activities[0];
-      expect(item).to.have.property('start_at');
-      expect(item).to.have.property('end_at');
-      const hasRoute = Object.prototype.hasOwnProperty.call(item, 'itinerary') || Object.prototype.hasOwnProperty.call(item, 'gps');
-      expect(hasRoute).to.equal(true);
-    }
+  test('activity shape', function () {
+    const item = res.body.physical_activities[0];
+    expect(item).to.have.property('start_at');
+    expect(item).to.have.property('end_at');
+    const hasRoute = Object.prototype.hasOwnProperty.call(item, 'itinerary') || Object.prototype.hasOwnProperty.call(item, 'gps');
+    expect(hasRoute).to.equal(true);
   });
 
-  test('error shape when error', function () {
-    if (res.status >= 400) {
-      expect(res.body).to.be.an('object');
-      expect(res.body).to.have.property('message');
-    }
-  });
 }

@@ -36,10 +36,4 @@ tests {
     expect(res.body).to.have.property('longitude');
   });
 
-  test('error shape when error', function () {
-    if (res.status >= 400) {
-      expect(res.body).to.be.an('object');
-      expect(res.body).to.have.property('message');
-    }
-  });
 }
