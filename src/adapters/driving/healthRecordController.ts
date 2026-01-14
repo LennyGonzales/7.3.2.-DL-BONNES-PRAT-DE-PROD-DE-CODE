@@ -15,6 +15,8 @@ export class HealthRecordController {
     app.get('/users/:user_id/health_records', this.getAllHealthRecords.bind(this));
     app.post('/users/:user_id/health_records', this.createHealthRecord.bind(this));
     app.get('/health_records/:id', this.getHealthRecord.bind(this));
+    app.delete('/health_records/:id', this.deleteHealthRecord.bind(this));
+    app.patch('/health_records/:id', this.updateHealthRecord.bind(this));
   }
 
   async getAllHealthRecords(req: Request, res: Response) {

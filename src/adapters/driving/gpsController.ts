@@ -14,6 +14,8 @@ export class GpsController {
     app.get('/users/:user_id/gps', this.getAllGps.bind(this));
     app.post('/users/:user_id/gps', this.createGps.bind(this));
     app.get('/gps/:id', this.getGps.bind(this));
+    app.delete('/gps/:id', this.deleteGps.bind(this));
+    app.patch('/gps/:id', this.updateGps.bind(this));
   }
 
   async getAllGps(req: Request, res: Response) {
