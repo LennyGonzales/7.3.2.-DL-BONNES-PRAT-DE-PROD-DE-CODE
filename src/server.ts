@@ -16,13 +16,14 @@ import { PhysicalActivityService } from './services/physicalActivityService';
 import { inMemoryHealthRecordRepo } from './adapters/driven/inMemoryHealthRecordRepo';
 import { Sqlite3GpsRepo } from './adapters/driven/sqlite3GpsRepo';
 import db from "./infra/db/db";
+import { Sqlite3HealthRecordRepo } from './adapters/driven/sqlite3HealthRecordRepo';
 
 const app = express();
 app.use(express.json());
 
 const addressRepo = new InMemoryAddressRepo();
 const gpsRepo = new Sqlite3GpsRepo(db);
-const healthRecordRepo = new inMemoryHealthRecordRepo();
+const healthRecordRepo = new Sqlite3HealthRecordRepo(db);
 
 const file  = fs.readFileSync('./openapi.yaml', 'utf8')
 const swaggerDocument = YAML.parse(file)
