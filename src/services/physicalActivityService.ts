@@ -13,42 +13,60 @@ export class PhysicalActivityService implements PhysicalActivityPort {
               private repoHealthRecord: HealthRecordRepositoryPort) {}
 
   async listPhysicalActivitiesByUserId(user_id: string): Promise<PhysicalActivities> {
-      const userHealthRecords: HealthRecord[] = await this.repoHealthRecord.findAllByUserId(user_id);
-      const elevatedheartrateRecords: HealthRecord[] = userHealthRecords.filter(r => r.heartrate > ELEVATED_HEARTRATE_THRESHOLD);
-      const elevatedWithMs = elevatedheartrateRecords
-        .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
-        .filter((item) => !Number.isNaN(item.ms))
-        .sort((a, b) => a.ms - b.ms);
+      const userHealthRecords = await this.repoHealthRecord.findAllByUserId(user_id);
+      const activityGroups = this.groupElevatedHeartrates(userHealthRecords);
 
-      const activityGroups: HealthRecord[][] = [];
-      let currentGroup: HealthRecord[] = [];
-      let lastMs: number | null = null;
+      const userGps = await this.repoGps.findAllByUserId(user_id);
+      const gpsWithMs = this.sortGpsByTimestamp(userGps);
 
-      for (const item of elevatedWithMs) {
-        if (lastMs === null || item.ms - lastMs <= MAX_ELEVATED_GAP_MS) {
-          currentGroup.push(item.record);
-        } else {
-          activityGroups.push(currentGroup);
-          currentGroup = [item.record];
-        }
-        lastMs = item.ms;
-      }
+      const physicalActivities = this.buildPhysicalActivities(activityGroups, gpsWithMs);
+      return new PhysicalActivities(user_id, physicalActivities);
+  }
 
-      if (currentGroup.length > 0) {
+  private groupElevatedHeartrates(records: HealthRecord[]): HealthRecord[][] {
+    const elevatedWithMs = records
+      .filter((record) => record.heartrate > ELEVATED_HEARTRATE_THRESHOLD)
+      .map((record) => ({ record, ms: Date.parse(record.timestamp) }))
+      .filter((item) => !Number.isNaN(item.ms))
+      .sort((a, b) => a.ms - b.ms);
+
+    const activityGroups: HealthRecord[][] = [];
+    let currentGroup: HealthRecord[] = [];
+    let lastMs: number | null = null;
+
+    for (const item of elevatedWithMs) {
+      if (lastMs === null || item.ms - lastMs <= MAX_ELEVATED_GAP_MS) {
+        currentGroup.push(item.record);
+      } else {
         activityGroups.push(currentGroup);
+        currentGroup = [item.record];
       }
+      lastMs = item.ms;
+    }
 
-      const userGps: Gps[] = await this.repoGps.findAllByUserId(user_id);
-      const gpsWithMs = userGps
-        .map((gps) => ({ gps, ms: Date.parse(gps.timestamp) }))
-        .filter((item) => !Number.isNaN(item.ms))
-        .sort((a, b) => a.ms - b.ms);
+    if (currentGroup.length > 0) {
+      activityGroups.push(currentGroup);
+    }
 
-      const physicalActivities: PhysicalActivity[] = activityGroups.map((group) => {
-        const startAt = group[0].timestamp;
-        const endAt = group[group.length - 1].timestamp;
-        const startMs = Date.parse(startAt);
-        const endMs = Date.parse(endAt);
+    return activityGroups;
+  }
+
+  private sortGpsByTimestamp(userGps: Gps[]): Array<{ gps: Gps; ms: number }> {
+    return userGps
+      .map((gps) => ({ gps, ms: Date.parse(gps.timestamp) }))
+      .filter((item) => !Number.isNaN(item.ms))
+      .sort((a, b) => a.ms - b.ms);
+  }
+
+  private buildPhysicalActivities(
+    activityGroups: HealthRecord[][],
+    gpsWithMs: Array<{ gps: Gps; ms: number }>
+  ): PhysicalActivity[] {
+    return activityGroups.map((group) => {
+      const startAt = group[0].timestamp;
+      const endAt = group[group.length - 1].timestamp;
+      const startMs = Date.parse(startAt);
+      const endMs = Date.parse(endAt);
       const itinerary = gpsWithMs
         .filter((item) => item.ms >= startMs && item.ms <= endMs)
         .map((item) => ({
@@ -56,9 +74,7 @@ export class PhysicalActivityService implements PhysicalActivityPort {
           latitude: item.gps.latitude,
           longitude: item.gps.longitude,
         }));
-        return new PhysicalActivity(startAt, endAt, itinerary);
-      });
-
-      return new PhysicalActivities(user_id, physicalActivities);
+      return new PhysicalActivity(startAt, endAt, itinerary);
+    });
   }
 }
