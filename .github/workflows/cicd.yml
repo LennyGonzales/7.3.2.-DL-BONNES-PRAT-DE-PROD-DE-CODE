@@ -61,7 +61,7 @@ jobs:
           exit 1
 
       - name: Run Bruno collection
-        run: npx --yes @usebruno/cli run . --recursive --sandbox=developer
+        run: npx --yes @usebruno/cli run . -r --sandbox=developer
         working-directory: Evil Dystopia API
 
       - name: Stop API
