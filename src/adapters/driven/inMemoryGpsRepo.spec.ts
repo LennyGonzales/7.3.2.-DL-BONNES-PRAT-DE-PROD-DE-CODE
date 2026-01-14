@@ -2,6 +2,7 @@ import { createGpsDTO, Gps } from '../../domain/gps';
 import { inMemoryGpsRepo } from './inMemoryGpsRepo';
 
 describe('inMemoryGpsRepo', () => {
+  jest.mock('uuid', () => ({ v4: () => '123456789' }));
   let repo: inMemoryGpsRepo;
   let gps: Gps[] = [];
 

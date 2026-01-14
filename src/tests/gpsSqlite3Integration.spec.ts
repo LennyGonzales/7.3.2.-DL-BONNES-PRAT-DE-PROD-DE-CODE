@@ -1,14 +1,22 @@
-import { inMemoryGpsRepo } from '../adapters/driven/inMemoryGpsRepo';
-import { createGpsDTO, Gps } from '../domain/gps';
+import { Sqlite3GpsRepo } from '../adapters/driven/sqlite3GpsRepo';
+import { Gps, createGpsDTO } from '../domain/gps';
 import { GpsService } from '../services/gpsService';
+import { createTestDb } from '../infra/db/dbTest';
+import { cleanupDatabase } from '../infra/db/dbFactory';
 
-describe('GpsInMemoryIntegration', () => {
-  let repo: inMemoryGpsRepo;
+describe('GpsSqlite3Integration', () => {
+  let db: ReturnType<typeof createTestDb>;
+  let repo: Sqlite3GpsRepo;
   let service: GpsService;
 
   beforeEach(() => {
-    repo = new inMemoryGpsRepo();
+    db = createTestDb();
+    repo = new Sqlite3GpsRepo(db);
     service = new GpsService(repo);
+  });
+
+  afterEach(() => {
+    cleanupDatabase(db);
   });
 
   it('addGps et verification avec listGpsByUserId', async () => {
@@ -22,9 +30,7 @@ describe('GpsInMemoryIntegration', () => {
       await service.createGps(gps);
     }
 
-    const result = await service.listGpsByUserId(
-      'ae5a7d56-5ade-42b7-a2c5-284512da3a60'
-    );
+    const result = await service.listGpsByUserId('ae5a7d56-5ade-42b7-a2c5-284512da3a60');
 
     expect(result).toHaveLength(2);
     expect(result.map(g => g.latitude)).toEqual(['43.6728315', '21.6328315']);
@@ -32,7 +38,6 @@ describe('GpsInMemoryIntegration', () => {
 
   it('addGps et verification avec getGps', async () => {
     const sample = new createGpsDTO('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25T17:45:30.005Z', '43.6728315', '32.3326411');
-
     const created = await service.createGps(sample);
     const found = await service.getGps(created.id!);
 
@@ -46,6 +51,7 @@ describe('GpsInMemoryIntegration', () => {
   it('updateGps modifie un gps existant et verification avec getGps', async () => {
     const sample = new createGpsDTO('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25T17:45:30.005Z', '43.6728315', '32.3326411');
     const created = await service.createGps(sample);
+
     const updates: Partial<Omit<Gps, 'id'>> = {
       timestamp: '1985-10-25T17:45:30.005Z',
       latitude: '45.6728315',
@@ -80,4 +86,3 @@ describe('GpsInMemoryIntegration', () => {
     expect(found).toBeNull();
   });
 });
-

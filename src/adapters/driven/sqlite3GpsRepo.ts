@@ -1,6 +1,7 @@
 import { Gps } from '../../domain/gps';
 import { GpsRepositoryPort } from '../../ports/driven/gpsRepositoryPort';
 import BetterSqlite3 from 'better-sqlite3';
+import { v4 as uuidv4 } from 'uuid';
 
 export class Sqlite3GpsRepo implements GpsRepositoryPort {
   constructor(private readonly db: BetterSqlite3.Database) {}
@@ -33,12 +34,13 @@ export class Sqlite3GpsRepo implements GpsRepositoryPort {
 
   async save(gps: Omit<Gps, 'id'>): Promise<Gps> {
     return new Promise((resolve) => {
+      const id = uuidv4();
       const stmt = this.db.prepare(`
-        INSERT INTO gps (user_id, timestamp, latitude, longitude)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO gps (id, user_id, timestamp, latitude, longitude)
+        VALUES (?, ?, ?, ?, ?)
       `);
-      const info = stmt.run(gps.user_id, gps.timestamp, gps.latitude, gps.longitude);
-      resolve({ ...gps, id: String(info.lastInsertRowid) });
+      stmt.run(id, gps.user_id, gps.timestamp, gps.latitude, gps.longitude);
+      resolve({ ...gps, id });
     });
   }
 

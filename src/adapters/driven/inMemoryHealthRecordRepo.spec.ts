@@ -2,6 +2,7 @@ import { createHealthRecordDTO, HealthRecord } from '../../domain/healthRecord';
 import { inMemoryHealthRecordRepo } from './inMemoryHealthRecordRepo';
 
 describe('inMemoryHealthRecordRepo', () => {
+  jest.mock('uuid', () => ({ v4: () => '123456789' }));
   let repo: inMemoryHealthRecordRepo;
   let records: HealthRecord[] = [];
 
