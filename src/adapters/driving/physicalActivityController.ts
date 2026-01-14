@@ -15,7 +15,16 @@ export class PhysicalActivityController {
 
   async getAllPhysicalActivities(req: Request, res: Response) {
     const user_id = req.params.user_id;
-    const list = await this.service.listPhysicalActivitiesByUserId(user_id);
-    res.json(list);
+    if (!user_id) {
+      return res.status(400).json({ message: 'user_id required' });
+    }
+
+    try {
+      const list = await this.service.listPhysicalActivitiesByUserId(user_id);
+      return res.json(list);
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
+
 }

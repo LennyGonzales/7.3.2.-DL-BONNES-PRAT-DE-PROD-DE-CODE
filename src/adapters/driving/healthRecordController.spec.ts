@@ -40,6 +40,7 @@ describe('HealthRecordController', () => {
 
   it('createHealthRecord crée un health record et retourne 201', async () => {
     const created = new HealthRecord('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25T17:45:30.005Z', 72, 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    mockPort.listHealthRecordsByUserId.mockResolvedValue([]);
     mockPort.createHealthRecord.mockResolvedValue(created);
 
     const req = {

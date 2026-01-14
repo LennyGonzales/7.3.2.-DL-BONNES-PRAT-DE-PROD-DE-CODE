@@ -40,6 +40,7 @@ describe('GpsController', () => {
 
   it('createGps crée un gps et retourne 201', async () => {
     const created = new Gps('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25T17:45:30.005Z', '43.6728315', '32.3326411', 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    mockPort.listGpsByUserId.mockResolvedValue([]);
     mockPort.createGps.mockResolvedValue(created);
 
     const req = {
@@ -58,6 +59,7 @@ describe('GpsController', () => {
 
     await controller.createGps(req, res);
 
+    expect(mockPort.listGpsByUserId).toHaveBeenCalledWith('ae5a7d56-5ade-42b7-a2c5-284512da3a60');
     expect(mockPort.createGps).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60',
@@ -91,6 +93,31 @@ describe('GpsController', () => {
     expect(res.json).toHaveBeenCalledWith({
       message: 'user_id, timestamp, latitude and longitude required',
     });
+  });
+
+  it('createGps retourne 409 si gps dupliqué', async () => {
+    const duplicate = new Gps('ae5a7d56-5ade-42b7-a2c5-284512da3a60', '1985-09-25T17:45:30.005Z', '43.6728315', '32.3326411', 'd63a7ea6-6e0d-4183-ad6b-b6f21c8cecd2');
+    mockPort.listGpsByUserId.mockResolvedValue([duplicate]);
+
+    const req = {
+      params: { user_id: 'ae5a7d56-5ade-42b7-a2c5-284512da3a60' },
+      body: {
+        timestamp: '1985-09-25T17:45:30.005Z',
+        latitude: '43.6728315',
+        longitude: '32.3326411',
+      },
+    } as any;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as any;
+
+    await controller.createGps(req, res);
+
+    expect(mockPort.createGps).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({ message: 'duplicate gps' });
   });
 
   it('getGps retourne le gps quand il existe', async () => {

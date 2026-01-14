@@ -21,8 +21,16 @@ export class HealthRecordController {
 
   async getAllHealthRecords(req: Request, res: Response) {
     const user_id = req.params.user_id;
-    const list = await this.service.listHealthRecordsByUserId(user_id);
-    res.json(list);
+    if (!user_id) {
+      return res.status(400).json({ message: 'user_id required' });
+    }
+
+    try {
+      const list = await this.service.listHealthRecordsByUserId(user_id);
+      return res.json(list);
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
 
   async createHealthRecord(req: Request, res: Response) {
@@ -31,29 +39,77 @@ export class HealthRecordController {
     if (!user_id || !timestamp || !heartrate) {
       return res.status(400).json({ message: 'user_id, timestamp and heartrate required' });
     }
-    const created = await this.service.createHealthRecord(new HealthRecord(user_id, timestamp, heartrate));
-    res.status(201).json(created);
+
+    try {
+      const existing = await this.service.listHealthRecordsByUserId(user_id);
+      const hasDuplicate = existing.some(
+        (record) => record.timestamp === timestamp && record.heartrate === heartrate
+      );
+      if (hasDuplicate) {
+        return res.status(409).json({ message: 'duplicate medical record' });
+      }
+
+      const created = await this.service.createHealthRecord(new HealthRecord(user_id, timestamp, heartrate));
+      return res.status(201).json(created);
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
 
   async getHealthRecord(req: Request, res: Response) {
     const id = req.params.id;
-    const found = await this.service.getHealthRecord(id);
-    if (!found) return res.status(404).json({ message: 'Not found' });
-    res.json(found);
+    if (!id) {
+      return res.status(400).json({ message: 'id required' });
+    }
+
+    try {
+      const found = await this.service.getHealthRecord(id);
+      if (!found) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(found);
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
 
   async updateHealthRecord(req: Request, res: Response) {
     const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ message: 'id required' });
+    }
+
     const { timestamp, heartrate } = req.body;
-    const updated = await this.service.updateHealthRecord(id, { timestamp, heartrate });
-    if (!updated) return res.status(404).json({ message: 'Not found' });
-    res.json(updated);
+    if (!timestamp || !heartrate) {
+      return res.status(400).json({ message: 'timestamp and heartrate required' });
+    }
+
+    try {
+      const updated = await this.service.updateHealthRecord(id, { timestamp, heartrate });
+      if (!updated) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(updated);
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
 
   async deleteHealthRecord(req: Request, res: Response) {
     const id = req.params.id;
-    const deleted = await this.service.deleteHealthRecord(id);
-    if (!deleted) return res.status(404).json({ message: 'Not found' });
-    res.status(204).send();
+    if (!id) {
+      return res.status(400).json({ message: 'id required' });
+    }
+
+    try {
+      const deleted = await this.service.deleteHealthRecord(id);
+      if (!deleted) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500).json({ message: 'internal server error' });
+    }
   }
+
 }
