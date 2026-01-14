@@ -14,12 +14,14 @@ import { inMemoryGpsRepo } from './adapters/driven/inMemoryGpsRepo';
 import { PhysicalActivityController } from './adapters/driving/physicalActivityController';
 import { PhysicalActivityService } from './services/physicalActivityService';
 import { inMemoryHealthRecordRepo } from './adapters/driven/inMemoryHealthRecordRepo';
+import { Sqlite3GpsRepo } from './adapters/driven/sqlite3GpsRepo';
+import db from "./infra/db/db";
 
 const app = express();
 app.use(express.json());
 
 const addressRepo = new InMemoryAddressRepo();
-const gpsRepo = new inMemoryGpsRepo();
+const gpsRepo = new Sqlite3GpsRepo(db);
 const healthRecordRepo = new inMemoryHealthRecordRepo();
 
 const file  = fs.readFileSync('./openapi.yaml', 'utf8')
