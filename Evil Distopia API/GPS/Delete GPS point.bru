@@ -1,0 +1,15 @@
+meta {
+  name: Delete GPS point
+  type: http
+  seq: 24
+}
+
+delete {
+  url: http://localhost:3000/gps/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{gps_id}}
+}

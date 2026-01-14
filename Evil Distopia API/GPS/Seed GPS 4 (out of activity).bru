@@ -1,7 +1,7 @@
 meta {
-  name: Create GPS point
+  name: Seed GPS 4 (out of activity)
   type: http
-  seq: 6
+  seq: 19
 }
 
 post {
@@ -16,14 +16,14 @@ params:path {
 
 body:json {
   {
-    "timestamp": "2024-01-01T12:00:00Z",
-    "latitude": "43.9278",
-    "longitude": "4.7507"
+    "timestamp": "2020-01-01T10:10:00.000Z",
+    "latitude": "58.6728315",
+    "longitude": "87.3986411"
   }
 }
 
 script:post-response {
   if (res && res.body && res.body.id) {
-    bru.setVar('gps_id', res.body.id);
+    bru.setVar('gps_seed_4', res.body.id);
   }
 }

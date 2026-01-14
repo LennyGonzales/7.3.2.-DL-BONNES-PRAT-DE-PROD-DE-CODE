@@ -1,0 +1,15 @@
+meta {
+  name: Delete seeded medical record 3
+  type: http
+  seq: 32
+}
+
+delete {
+  url: http://localhost:3000/health_records/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{medical_seed_3}}
+}

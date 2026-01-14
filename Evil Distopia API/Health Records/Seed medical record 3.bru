@@ -1,7 +1,7 @@
 meta {
-  name: Create medical record
+  name: Seed medical record 3
   type: http
-  seq: 11
+  seq: 22
 }
 
 post {
@@ -16,13 +16,13 @@ params:path {
 
 body:json {
   {
-    "timestamp": "2024-01-01T12:00:00Z",
-    "heartbeat": 72
+    "timestamp": "2020-01-01T10:20:00.000Z",
+    "heartrate": 100
   }
 }
 
 script:post-response {
   if (res && res.body && res.body.id) {
-    bru.setVar('medical_id', res.body.id);
+    bru.setVar('medical_seed_3', res.body.id);
   }
 }

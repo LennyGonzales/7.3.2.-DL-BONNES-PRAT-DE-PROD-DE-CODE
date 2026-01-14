@@ -1,0 +1,15 @@
+meta {
+  name: Delete seeded GPS 2
+  type: http
+  seq: 27
+}
+
+delete {
+  url: http://localhost:3000/gps/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{gps_seed_2}}
+}
