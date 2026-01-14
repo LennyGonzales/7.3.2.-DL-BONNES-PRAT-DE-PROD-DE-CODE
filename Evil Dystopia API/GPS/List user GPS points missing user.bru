@@ -1,0 +1,26 @@
+meta {
+  name: List user GPS points missing user
+  type: http
+  seq: 36
+}
+
+get {
+  url: http://localhost:3000/users/:user_id/gps
+  body: none
+  auth: none
+}
+
+params:path {
+  user_id:
+}
+
+tests {
+  test('status', function () {
+    expect(res.status).to.equal(404);
+  });
+
+  test('error message', function () {
+    expect(res.body).to.contain('Cannot GET');
+  });
+
+}

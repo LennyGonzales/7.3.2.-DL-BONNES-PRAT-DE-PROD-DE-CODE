@@ -1,0 +1,33 @@
+meta {
+  name: Create medical record duplicate
+  type: http
+  seq: 23
+}
+
+post {
+  url: http://localhost:3000/users/:user_id/health_records
+  body: json
+  auth: none
+}
+
+params:path {
+  user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
+}
+
+body:json {
+  {
+    "timestamp": "2020-01-01T10:00:00.000Z",
+    "heartrate": 95
+  }
+}
+
+tests {
+  test('status', function () {
+    expect(res.status).to.equal(409);
+  });
+
+  test('error message', function () {
+    expect(res.body).to.deep.equal({ message: 'duplicate medical record' });
+  });
+
+}

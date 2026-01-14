@@ -1,0 +1,34 @@
+meta {
+  name: Create GPS point duplicate
+  type: http
+  seq: 38
+}
+
+post {
+  url: http://localhost:3000/users/:user_id/gps
+  body: json
+  auth: none
+}
+
+params:path {
+  user_id: 3f8fc01f-3847-4a1e-a5f9-aa4699a15eab
+}
+
+body:json {
+  {
+    "timestamp": "2020-01-01T10:00:30.000Z",
+    "latitude": "43.6728315",
+    "longitude": "32.3326411"
+  }
+}
+
+tests {
+  test('status', function () {
+    expect(res.status).to.equal(409);
+  });
+
+  test('error message', function () {
+    expect(res.body).to.deep.equal({ message: 'duplicate gps' });
+  });
+
+}
