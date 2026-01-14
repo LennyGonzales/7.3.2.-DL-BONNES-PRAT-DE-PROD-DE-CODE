@@ -43,6 +43,7 @@ jobs:
 
       - name: Build and start API
         run: |
+          mkdir -p data
           npm run build
           npm start &
           echo $! > server.pid
