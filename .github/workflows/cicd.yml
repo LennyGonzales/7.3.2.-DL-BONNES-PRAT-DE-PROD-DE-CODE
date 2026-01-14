@@ -3,7 +3,7 @@ name: Tests Execution
 on:
   push:
     branches:
-      - cicd
+      - main
 
 jobs:
   unit-tests:
