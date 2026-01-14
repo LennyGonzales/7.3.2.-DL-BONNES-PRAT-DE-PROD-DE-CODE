@@ -61,7 +61,8 @@ jobs:
           exit 1
 
       - name: Run Bruno collection
-        run: npx --yes @usebruno/cli run "Evil Dystopia API"
+        run: npx --yes @usebruno/cli run .
+        working-directory: Evil Dystopia API
 
       - name: Stop API
         if: always()
